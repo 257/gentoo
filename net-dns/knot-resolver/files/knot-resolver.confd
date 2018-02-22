@@ -1,0 +1,13 @@
+# Config file for /etc/init.d/knot-resolver
+
+# Config file path.
+#KRESD_CONFIG="/etc/knot-resolver/config"
+
+# Cache (working) directory.
+#KRESD_CACHEDIR="/var/cache/knot-resolver"
+
+# Path to the logging file.
+#KRESD_LOG="/var/log/knot-resolver.log"
+
+# Start N forks sharing the configuration
+#KRESD_FORKS="3"

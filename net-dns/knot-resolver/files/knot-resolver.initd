@@ -1,0 +1,33 @@
+#!/sbin/openrc-run
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+description="A caching full DNS resolver implementation written in C and LuaJIT"
+
+: ${KRESD_CONFIG:="/etc/knot-resolver/config"}
+: ${KRESD_CACHEDIR:="/var/cache/knot-resolver"}
+: ${KRESD_KEYFILE:="/var/lib/knot-resolver/root.keys"}
+: ${KRESD_LOG:="/var/log/knot-resolver.log"}
+: ${SSD_OPTS:="-1 ${KRESD_LOG} -2 ${KRESD_LOG}"}
+
+command="/usr/sbin/kresd"
+command_args="--config=${KRESD_CONFIG} \
+	--keyfile=${KRESD_KEYFILE} \
+	--forks=${KRESD_FORKS:-1} \
+	${KRESD_CACHEDIR}"
+command_background=true
+pidfile="/run/${RC_SVCNAME}.pid"
+required_files="${KRESD_CONFIG}"
+retry=${KRESD_TERMTIMEOUT:-"TERM/60/KILL/5"}
+start_stop_daemon_args="-d ${KRESD_CACHEDIR} \
+	${SSD_OPTS}"
+
+depend() {
+	need net
+	provide dns
+}
+
+start_pre() {
+	checkpath -d -m 0750 -o "${KRESD_USER:-"kresd"}" \
+		"${KRESD_CACHEDIR}" "${KRESD_KEYFILE%/*}"
+}
